@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, TouchableOpacity } from 'react-native';
 import { Entypo,MaterialCommunityIcons } from '@expo/vector-icons';
-import moment from 'moment';
 import { useEffect, useState } from 'react';
 import EggBoilItem from './components/EggBoilItem';
 
@@ -17,7 +16,7 @@ export default function App() {
   const egg = [{
     id: "1",
     boilType: "Soft",
-    duration: 10
+    duration: 190
   },
   {
     id: "2",
@@ -37,7 +36,8 @@ const [duration, setDuration] = useState(egg[1].duration);
 const [isBoiling,setIsBoiling] = useState(false);
 const { mins, secs } = getRemaining(((noOfEggs-1) * 15) + duration);
 const [lastBoilType,setLastBoilType] = useState(1);
-const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duration)
+const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duration);
+
 
 // set duration
   const selectBoilType = (indexAt: number) => {
@@ -55,6 +55,7 @@ const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duratio
     setIsBoiling(false);
     console.log(duration,"duration");
     console.log(totalDuration,"total duration");
+   
   }
 
   const changeNoOfEggs = (type: String) =>{
@@ -70,6 +71,7 @@ const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duratio
     
   }
 
+
   useEffect(() => {
     let interval = null;
     if (isBoiling && totalDuration>=3) {
@@ -78,7 +80,7 @@ const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duratio
         setTotalDuration(((noOfEggs-1) * 15) + duration);
         console.log(totalDuration);
       }, 1000);
-    } else {
+    } else{
       clearInterval(interval);
       reset();
     }
@@ -104,15 +106,28 @@ const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duratio
         <Text style={styles.currentBoilType}>{noOfEggs} {egg[lastBoilType].boilType} {noOfEggs === 1 ? "Egg" : "Eggs"}</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={toggle}>
-          <Text style={styles.buttonText}>{isBoiling ? 'Pause' : 'Start'}</Text>
+        <TouchableOpacity 
+          style={[styles.button,{
+            backgroundColor: isBoiling ? "#222831" : "#F05454"
+          }]} 
+          onPress={toggle} 
+          disabled={isBoiling}
+        >
+          <Text 
+            style={[styles.buttonText,{
+              color: isBoiling ? "#222831" : "#fff"
+            }]}>Start</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={reset}>
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity>
       </View>
       
-      <View style={styles.noOfEggs}>
+      <View 
+        style={[styles.noOfEggs,{
+        opacity: isBoiling ? 0 : 1
+          }]}
+      >
         <Pressable onPress={()=>changeNoOfEggs("minus")}>
           <Entypo name="squared-minus" size={40} color="#F05454" />
         </Pressable>
@@ -184,6 +199,7 @@ const styles = StyleSheet.create({
     width: "40%",
     alignItems: "center",
     justifyContent: "center",
+    
   },
   buttonText:{
     fontSize: 35,
