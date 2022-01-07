@@ -5,12 +5,13 @@ import { FontAwesome5 } from '@expo/vector-icons';
 export type EggBoilItemProps = {
     name: String;
     onPress: ()=> void;
+    isBoiling: boolean;
 
 }
 
 const EggBoilItem = (props: EggBoilItemProps) => {
     return (
-        <Pressable style={styles.eggIcon} onPress={props.onPress}>
+        <Pressable style={styles.eggIcon} onPress={props.onPress} disabled={props.isBoiling}>
             <FontAwesome5 name="egg" size={24} color="#F05454" />
             <Text style={styles.eggBoilTypeText}>{props.name}</Text>
         </Pressable>
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 15,
       },
-      eggBoilTypeText:{
+    eggBoilTypeText:{
         color: "#fff",
         fontSize: 17,
         fontWeight: "500",
