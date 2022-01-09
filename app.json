@@ -2,13 +2,13 @@
   "expo": {
     "name": "eggTimer",
     "slug": "eggTimer",
-    "version": "1.0.0",
+    "version": "3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/eggTimer.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#222831"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -21,9 +21,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#222831"
+      },
+      "package": "com.brijenmakwana.eggTimer",
+      "permissions" : []
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, TouchableOpacity, Alert } from 'react-native';
 import { Entypo,MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import EggBoilItem from './components/EggBoilItem';
 
+// format the duratiuon in mm:ss format
 const formatNumber = (number) => `0${number}`.slice(-2);
 
+// get remaining duration
 const getRemaining = (time) => {
     const mins = Math.floor(time / 60);
     const secs = time - mins * 60;
@@ -13,6 +15,8 @@ const getRemaining = (time) => {
 }
 
 export default function App() {
+
+  //this array contains details about eggs, boil type and duration
   const egg = [{
     id: "1",
     boilType: "Soft",
@@ -30,34 +34,45 @@ export default function App() {
   }
 ]
 
-// duration for boiling according to user choice
+// number eggs user want to boil
 const [noOfEggs,setNoOfEggs] = useState(1);
+
+// duration for 1 egg
 const [duration, setDuration] = useState(egg[1].duration);
+
+// if eggs are currently boiling
 const [isBoiling,setIsBoiling] = useState(false);
+
+// saving min and sec for the duration
 const { mins, secs } = getRemaining(((noOfEggs-1) * 15) + duration);
+
+// it will reset the last boiling type user selected
 const [lastBoilType,setLastBoilType] = useState(1);
+
+// calculate total duration on the basis of number of eggs
 const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duration);
 
 
-// set duration
+// selecting boil type
   const selectBoilType = (indexAt: number) => {
     setDuration(egg[indexAt].duration);
     setLastBoilType(indexAt);
   }
 
+  // toggle if it's boiling or not
   const toggle = () => {
     setIsBoiling(!isBoiling);
   }
 
+  // reset the data after timer ends
   const reset = () => {
     setDuration(egg[lastBoilType].duration);
     setTotalDuration(((noOfEggs-1) * 15) + duration);
     setIsBoiling(false);
-    console.log(duration,"duration");
-    console.log(totalDuration,"total duration");
    
   }
 
+  // increase or decrease the number of eggs
   const changeNoOfEggs = (type: String) =>{
     if(!isBoiling){
       if(type === "plus"){
@@ -71,18 +86,27 @@ const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duratio
     
   }
 
-
+  // timer logic
   useEffect(() => {
     let interval = null;
     if (isBoiling && totalDuration>=3) {
       interval = setInterval(() => {
         setDuration(duration => duration - 1);
         setTotalDuration(((noOfEggs-1) * 15) + duration);
-        console.log(totalDuration);
       }, 1000);
     } else{
       clearInterval(interval);
+      if(isBoiling){
+        Alert.alert("Done","Your Eggs are ready!!!",[
+          {
+            text: "Ok",
+            onPress: ()=>{},
+            style: "cancel"
+          }
+        ])
+      }
       reset();
+      
     }
     return () => clearInterval(interval);
   }, [isBoiling, duration]);
@@ -93,7 +117,17 @@ const [totalDuration, setTotalDuration] = useState(((noOfEggs-1) * 15) + duratio
       <StatusBar style="light" />
       <View style={styles.eggContent}>
         <View style={styles.eggImageContainer}>
-          <MaterialCommunityIcons name="egg-easter" size={200} color="#DDDDDD"/>
+          {
+            // change the image based on boiling or not
+            isBoiling ? 
+            <Image
+              source={require("./assets/boiling.png")}
+              style={styles.boilingImage}
+              resizeMode="contain"
+            /> :
+            <MaterialCommunityIcons name="egg-easter" size={200} color="#DDDDDD"/>
+          }
+          
         </View>
         <View style={styles.eggBoilType}>
           <EggBoilItem name={egg[0].boilType} onPress={()=>selectBoilType(0)} isBoiling={isBoiling}/>
@@ -165,6 +199,10 @@ const styles = StyleSheet.create({
     padding: 15,
     justifyContent: "center",
     alignItems: "center"
+  },
+  boilingImage:{
+    height: 200,
+    width: 200
   },
   eggTimer:{
     backgroundColor: "#30475E",
